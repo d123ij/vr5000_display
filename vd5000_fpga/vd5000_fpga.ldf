@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="vd5000_fpga" device="LCMXO2-1200HC-6SG32C" default_implementation="impl1">
+    <Options>
+        <Option name="HDL type" value="VHDL"/>
+    </Options>
+    <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
+        <Options def_top="vd5000disp" top="vd5000disp"/>
+        <Source name="top_level.vhd" type="VHDL" type_short="VHDL">
+            <Options top_module="vd5000disp"/>
+        </Source>
+        <Source name="fpga_load_prj_bit.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="fpga_load_prj_jed.xcf" type="Programming Project File" type_short="Programming">
+            <Options/>
+        </Source>
+        <Source name="vd5000_fpga.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="vd5000_fpga1.sty"/>
+</BaliProject>
