@@ -1,0 +1,44 @@
+; This is PIO function that captures data from FPGA and DMAs them into the memory
+; it captures two data/command sequences (16 bit each) packs them into the 32 bit words, two per word
+; Bits (15:0) are the data/command that came first
+.program dtin_sm
+.side_set 1                ; 1 bit out of 5 bits is reserved for the side set (pix_aux)
+.wrap_target
+    wait 0 gpio 28      side 0x0      ; Wait for cs to go low
+    wait 1 gpio 27      side 0x0 [1]  ; Wait CLK to go high
+    in   pins, 4        side 0x0      ; Input 4 bits to in register
+    wait 0 gpio 27      side 0x0 [1]  ; Wait CLK to go low
+    in   pins, 4        side 0x0      ; Input 4 bits to in register
+    wait 1 gpio 27      side 0x0 [1]  ; Wait CLK to go high
+    in   pins, 4        side 0x0      ; Input 4 bits to in register
+    wait 0 gpio 27      side 0x0 [1]  ; Wait CLK to go low
+    in   pins, 4        side 0x0      ; At this point 16 bit were input
+    push iffull noblock side 0x0      ; Only pushes to FIFO is IN is full
+    wait 1 gpio 28      side 0x1      ; Wait for cs to go low
+.wrap
+
+% c-sdk {
+#include "hardware/gpio.h"
+static inline void pio_dtin_sm_init(PIO pio, uint sm, uint prog_offs, uint pin_dt, uint pin_clk, uint pin_csn, uint pin_aux, float clkdiv)
+  {
+    //set data pins
+    for (int i=0;i<7;i++) pio_gpio_init(pio, pin_dt + i);//set up pint for PIO use
+    pio_sm_config c = dtin_sm_program_get_default_config(prog_offs);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin_dt,   6, false);//(PIO pio, uint sm, uint pin_base, uint pin_count, bool is_out);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin_aux,  1, true);//led for testing
+    
+    sm_config_set_in_pins(&c, pin_dt);             //start index of the in pins
+    sm_config_set_sideset_pins(&c, pin_aux);       //start index of side-set pin
+    sm_config_set_clkdiv(&c, clkdiv);              // set max clock for PIO, needs to be 1
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX); //double fifo for receive
+
+    pio_sm_init(pio, sm, prog_offs, &c);
+    pio_sm_set_enabled(pio, sm, true);
+  }
+%}
+
+
+
+
+
+
