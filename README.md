@@ -1,4 +1,4 @@
-his project is to create a substitute display unit for Yaesu VR-5000 broad band receiver "famous" for failing LCDs. The design is made possible only because of prior work by kakiralime (this is youtube username). I would not have enough patience to pull this through myself. 
+This project is to create a substitute display unit for Yaesu VR-5000 broad band receiver "famous" for failing LCDs. The design is made possible only because of prior work by kakiralime (this is youtube username). I would not have enough patience to pull this through myself. 
 There are three parts to the project:
  - Hardware (PCB)
  - FPGA firmware project
